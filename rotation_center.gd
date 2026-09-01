@@ -1,6 +1,7 @@
 extends Marker3D
 
 const RAY_LENGTH := 100.0
+const ZOOM_FACTOR := 1.1
 
 var raycast_result: Dictionary
 var update_raycast := false
@@ -12,6 +13,7 @@ var mouse_button_handler := MouseButtonHandler.new()
 
 @onready var camera = $Camera3D
 @onready var axis = $Axis
+@onready var ray_pointer = $RayPointer
 
 func _ready() -> void:
 	pass
@@ -34,9 +36,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		update_raycast = true
 		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN and event.is_pressed():
-			camera.size *= 1.1
+			zoom(ZOOM_FACTOR)
 		elif event.button_index == MOUSE_BUTTON_WHEEL_UP and event.is_pressed():
-			camera.size /= 1.1
+			zoom(1/ZOOM_FACTOR)
 		elif event.button_index == MOUSE_BUTTON_MIDDLE or event.button_index == MOUSE_BUTTON_RIGHT:
 			if event.is_pressed():
 				mouse_button_handler.press(event.button_index)
@@ -56,11 +58,26 @@ func _unhandled_input(event: InputEvent) -> void:
 				
 			MOUSE_BUTTON_RIGHT:
 				if raycast_result:
-					var temp_pos = camera.global_position
+					var camera_position = camera.global_position
 					position = raycast_result.position
-					camera.global_position = temp_pos
+					camera.global_position = camera_position
 				rotation.y -= event.screen_relative.x / 100
 				rotation.x -= event.screen_relative.y / 100
 			
 			_:
 				update_raycast = true
+
+func zoom(factor: float) -> void:
+	var mouse := get_viewport().get_mouse_position()
+	var viewport_size := get_viewport().get_visible_rect().size
+	var mouse_offset := mouse - viewport_size / 2.0
+	mouse_offset *= 2
+	print(mouse_offset)
+	var normalized := mouse_offset / viewport_size
+	print(normalized)
+	ray_pointer.position = camera.project_ray_origin(get_viewport().get_mouse_position())
+	ray_pointer.rotation = camera.global_rotation
+	camera.size *= factor
+	var camera_scale := factor - 1
+	camera.h_offset += -normalized.x * camera.size * camera_scale
+	camera.v_offset += normalized.y * camera.size * camera_scale

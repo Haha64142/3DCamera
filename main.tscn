@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://b61om5yqil3ak" path="res://5_32_allen_wrench.tscn" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://det4nwe73pvsx" path="res://axis.tscn" id="1_h2yge"]
 [ext_resource type="Script" uid="uid://dsw542p237pvn" path="res://rotation_center.gd" id="3_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://bh7124cgyo4o8" path="res://ray_pointer.tscn" id="4_1bvp3"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_h2yge"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -37,4 +38,7 @@ projection = 1
 
 [node name="Axis" parent="RotationCenter" unique_id=1396364439 instance=ExtResource("1_h2yge")]
 transform = Transform3D(0.030000001, 4.656613e-10, -9.313226e-10, 0, 0.030000001, 0, 0, 0, 0.030000001, 0, 0, 0)
+top_level = true
+
+[node name="RayPointer" parent="RotationCenter" unique_id=990542880 instance=ExtResource("4_1bvp3")]
 top_level = true

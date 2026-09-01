@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://dflqj2jcu83nx"]
+
+[ext_resource type="PackedScene" uid="uid://b61om5yqil3ak" path="res://5_32_allen_wrench.tscn" id="1_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://det4nwe73pvsx" path="res://axis.tscn" id="1_h2yge"]
+[ext_resource type="Script" uid="uid://dsw542p237pvn" path="res://rotation_center.gd" id="3_1bvp3"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_h2yge"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_1bvp3"]
+sky_material = SubResource("ProceduralSkyMaterial_h2yge")
+
+[sub_resource type="Environment" id="Environment_lquwl"]
+background_mode = 2
+sky = SubResource("Sky_1bvp3")
+glow_enabled = true
+
+[node name="Main" type="Node3D" unique_id=366472267]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=145691965]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1982916768]
+environment = SubResource("Environment_lquwl")
+
+[node name="5-32 Allen Wrench" parent="." unique_id=1286548071 instance=ExtResource("1_0xm2m")]
+transform = Transform3D(10, 0, 0, 0, -4.371139e-07, 10, 0, -10, -4.371139e-07, 0, 0, 0)
+
+[node name="RotationCenter" type="Marker3D" parent="." unique_id=1376003840]
+transform = Transform3D(0.861631, -0.2555398, 0.43851054, 0, 0.8640001, 0.5034917, -0.5075353, -0.43382403, 0.74444926, 0, 0, 0)
+script = ExtResource("3_1bvp3")
+
+[node name="Camera3D" type="Camera3D" parent="RotationCenter" unique_id=983160111]
+transform = Transform3D(1, -1.4901161e-08, 0, -1.4901161e-08, 1, 2.9802322e-08, 0, 2.9802322e-08, 1, 0, 0, 1)
+projection = 1
+
+[node name="Axis" parent="RotationCenter" unique_id=1396364439 instance=ExtResource("1_h2yge")]
+transform = Transform3D(0.030000001, 4.656613e-10, -9.313226e-10, 0, 0.030000001, 0, 0, 0, 0.030000001, 0, 0, 0)
+top_level = true

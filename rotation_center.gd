@@ -6,9 +6,6 @@ const ZOOM_FACTOR := 1.1
 var raycast_result: Dictionary
 var update_raycast := false
 
-var pan_scale: float
-var viewport_height: float
-
 var mouse_button_handler := MouseButtonHandler.new()
 
 @onready var camera = $Camera3D
@@ -25,11 +22,8 @@ func _physics_process(_delta: float) -> void:
 		var query := PhysicsRayQueryParameters3D.create(from, to)
 		raycast_result = get_world_3d().direct_space_state.intersect_ray(query)
 		print(raycast_result)
-		if raycast_result:
-			print(raycast_result.position)
-			axis.position = raycast_result.position
-		else:
-			print("none")
+		#if raycast_result:
+			#axis.position = raycast_result.position
 		update_raycast = false
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -48,36 +42,46 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		match mouse_button_handler.get_active_button():
 			MOUSE_BUTTON_MIDDLE:
-				viewport_height = get_viewport().get_visible_rect().size.y
-				pan_scale = camera.size / viewport_height
-				translate_object_local(Vector3(
-						pan_scale * -event.screen_relative.x,
-						pan_scale * event.screen_relative.y,
-						0
-				))
+				pan(event.screen_relative)
 				
 			MOUSE_BUTTON_RIGHT:
-				if raycast_result:
-					var camera_position = camera.global_position
-					position = raycast_result.position
-					camera.global_position = camera_position
-				rotation.y -= event.screen_relative.x / 100
-				rotation.x -= event.screen_relative.y / 100
+				rotate_camera(event.screen_relative)
 			
 			_:
 				update_raycast = true
 
 func zoom(factor: float) -> void:
-	var mouse := get_viewport().get_mouse_position()
+	var mouse_pos := get_viewport().get_mouse_position()
 	var viewport_size := get_viewport().get_visible_rect().size
-	var mouse_offset := mouse - viewport_size / 2.0
-	mouse_offset *= 2
-	print(mouse_offset)
-	var normalized := mouse_offset / viewport_size
-	print(normalized)
-	ray_pointer.position = camera.project_ray_origin(get_viewport().get_mouse_position())
-	ray_pointer.rotation = camera.global_rotation
-	camera.size *= factor
+	var mouse_offset_pixels := mouse_pos - viewport_size / 2.0
+	var mouse_offset_meters: Vector2 = mouse_offset_pixels * camera.size / viewport_size.y
+	var new_size = camera.size * factor
+	if new_size <= 0.00001:
+		return
+	camera.size = new_size
+	print(camera.size)
 	var camera_scale := factor - 1
-	camera.h_offset += -normalized.x * camera.size * camera_scale
-	camera.v_offset += normalized.y * camera.size * camera_scale
+	translate_object_local(Vector3(
+			-mouse_offset_meters.x * camera_scale,
+			mouse_offset_meters.y * camera_scale,
+			0
+	))
+	#ray_pointer.position = camera.project_ray_origin(mouse)
+	#ray_pointer.rotation = camera.global_rotation
+
+
+func pan(mouse_delta: Vector2) -> void:
+	var pan_ratio: float = camera.size / get_viewport().get_visible_rect().size.y
+	translate_object_local(Vector3(
+			pan_ratio * -mouse_delta.x,
+			pan_ratio * mouse_delta.y,
+			0
+	))
+
+func rotate_camera(mouse_delta: Vector2) -> void:
+	if raycast_result:
+		var camera_position = camera.global_position
+		position = raycast_result.position
+		camera.global_position = camera_position
+	rotation.y -= mouse_delta.x / 100
+	rotation.x -= mouse_delta.y / 100

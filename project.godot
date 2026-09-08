@@ -13,7 +13,9 @@ config_version=5
 config/name="3D Camera"
 run/main_scene="uid://dflqj2jcu83nx"
 config/features=PackedStringArray("4.7", "Forward Plus")
-config/icon="res://icon.svg"
+boot_splash/bg_color=Color(0.2, 0.2, 0.2, 1)
+boot_splash/image="uid://de5swp5a7ixrr"
+config/icon="uid://de5swp5a7ixrr"
 
 [display]
 

@@ -42,7 +42,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		match mouse_button_handler.get_active_button():
 			MOUSE_BUTTON_MIDDLE:
-				pan(event.screen_relative)
+				pan(event.relative)
 				
 			MOUSE_BUTTON_RIGHT:
 				rotate_camera(event.screen_relative)
